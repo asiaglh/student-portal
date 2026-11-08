@@ -19,3 +19,7 @@ class StudentNotFoundError(PortalError, LookupError):
 
 class StorageError(PortalError):
     """Помилка читання або запису файлу даних."""
+
+
+class JournalFormatError(PortalError, ValueError):
+    """Рядок журналу оцінок має неправильний формат."""
