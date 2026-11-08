@@ -1,10 +1,13 @@
 """Збереження групи у JSON з відновленням об’єктів і дат."""
 
 import json
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, TextIO
 
+from student_portal.decorators import timed
 from student_portal.exceptions import StorageError
 from student_portal.grades import Grade
 from student_portal.group import Group
@@ -62,10 +65,24 @@ def load_group(path: Path) -> Group:
         raise StorageError(f"не вдалося прочитати файл {path}: {error}") from error
 
 
+@contextmanager
+def atomic_write(path: Path, encoding: str = "utf-8") -> Iterator[TextIO]:
+    """Записує файл повністю або залишає попередню версію без змін."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_name(f".{path.name}.tmp")
+    try:
+        with temp.open("w", encoding=encoding, newline="") as file:
+            yield file
+        temp.replace(path)
+    except BaseException:
+        temp.unlink(missing_ok=True)
+        raise
+
+
+@timed
 def save_group(group: Group, path: Path) -> None:
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("w", encoding="utf-8") as file:
+        with atomic_write(path) as file:
             json.dump(group_to_dict(group), file, ensure_ascii=False, indent=2)
     except OSError as error:
         raise StorageError(f"не вдалося зберегти файл {path}: {error}") from error

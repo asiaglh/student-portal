@@ -2,11 +2,13 @@
 
 from collections import Counter
 from collections.abc import Iterator
+from copy import deepcopy
 from dataclasses import dataclass, field
 from statistics import fmean
+from types import TracebackType
 
 from student_portal.exceptions import DuplicateStudentError, StudentNotFoundError
-from student_portal.grades import ECTS_LETTERS
+from student_portal.grades import ECTS_LETTERS, Grade
 from student_portal.people import Student
 
 
@@ -65,11 +67,21 @@ class Group:
         averages = [average for s in self if (average := s.average()) is not None]
         return fmean(averages) if averages else None
 
+    def iter_grades(self) -> Iterator[tuple[Student, Grade]]:
+        """Ліниво видає всі пари студент - оцінка."""
+        for student in self:
+            for grade in student.grades:
+                yield student, grade
+
+    def transaction(self) -> Transaction:
+        """Повертає менеджер відкату змін студентів групи."""
+        return Transaction(self)
+
     def courses(self) -> set[str]:
-        return {grade.course for student in self for grade in student.grades}
+        return {grade.course for _, grade in self.iter_grades()}
 
     def ects_distribution(self) -> dict[str, int]:
-        counts = Counter(grade.ects for student in self for grade in student.grades)
+        counts = Counter(grade.ects for _, grade in self.iter_grades())
         return {letter: counts[letter] for letter in ECTS_LETTERS if counts[letter]}
 
     def best_by_course(self) -> dict[str, Student]:
@@ -86,3 +98,24 @@ class Group:
             )
             result[course] = max(candidates, key=lambda s: s.average_for(course) or 0)
         return result
+
+
+class Transaction:
+    """Відновлює студентів групи після винятку в блоці with."""
+
+    def __init__(self, group: Group) -> None:
+        self._group = group
+        self._snapshot: dict[int, Student] = {}
+
+    def __enter__(self) -> Group:
+        self._snapshot = deepcopy(self._group.students)
+        return self._group
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
+    ) -> None:
+        if exc_type is not None:
+            self._group.students = self._snapshot
