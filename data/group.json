@@ -1,0 +1,74 @@
+{
+  "name": "КН-11",
+  "students": [
+    {
+      "id": 1,
+      "first_name": "Олена",
+      "last_name": "Коваль",
+      "grades": [
+        {
+          "course": "Python",
+          "score": 95,
+          "graded_on": "2026-10-01"
+        },
+        {
+          "course": "Бази даних",
+          "score": 88,
+          "graded_on": "2026-10-08"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "first_name": "Андрій",
+      "last_name": "Мельник",
+      "grades": [
+        {
+          "course": "Python",
+          "score": 72,
+          "graded_on": "2026-10-01"
+        },
+        {
+          "course": "Бази даних",
+          "score": 61,
+          "graded_on": "2026-10-08"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "first_name": "Ірина",
+      "last_name": "Шевчук",
+      "grades": [
+        {
+          "course": "Python",
+          "score": 84,
+          "graded_on": "2026-10-01"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "first_name": "Максим",
+      "last_name": "Бондар",
+      "grades": [
+        {
+          "course": "Python",
+          "score": 45,
+          "graded_on": "2026-10-01"
+        },
+        {
+          "course": "Бази даних",
+          "score": 78,
+          "graded_on": "2026-10-08"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "first_name": "Софія",
+      "last_name": "Ткачук",
+      "grades": []
+    }
+  ]
+}

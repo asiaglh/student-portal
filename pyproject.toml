@@ -1,0 +1,28 @@
+[project]
+name = "student-portal"
+version = "0.2.0"
+description = "Система управління студентами"
+readme = "README.md"
+authors = [
+    { name = "Галух Анна Олександрівна", email = "90985892+asiaglh@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+student-portal = "student_portal:main"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.4",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "SIM"]
