@@ -11,7 +11,7 @@
 - Django, Django REST Framework
 - FastAPI
 - Vue.js
-- PostgreSQL, Docker
+- PostgreSQL, Docker, Docker Compose
 
 ## Запуск
 Інструкцію буде додано в ЛР 2. На цьому етапі підготовлено репозиторій і документацію.
