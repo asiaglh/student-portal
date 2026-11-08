@@ -10,7 +10,7 @@ from student_portal.decorators import timed
 from student_portal.exceptions import PortalError, StorageError
 from student_portal.grades import ECTS_LETTERS, Grade
 from student_portal.group import Group
-from student_portal.journal import import_journal
+from student_portal.journal import export_journal, import_journal
 from student_portal.notify import notify_all
 from student_portal.people import Student
 from student_portal.storage import load_group, save_group
@@ -129,6 +129,13 @@ def import_grades(group: Group) -> None:
 def notify_students(group: Group) -> None:
     for message in asyncio.run(notify_all(group)):
         print(f"Надіслано: {message}")
+
+
+@command("11", "експортувати журнал CSV (варіант 4 ЛР3)")
+def export_grades(group: Group) -> None:
+    path = Path(input("Шлях для експорту CSV: ").strip())
+    count = export_journal(group, path)
+    print(f"Експортовано оцінок: {count}")
 
 
 def run(group: Group) -> None:

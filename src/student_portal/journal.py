@@ -14,6 +14,7 @@ from student_portal.exceptions import (
 )
 from student_portal.grades import Grade
 from student_portal.group import Group
+from student_portal.storage import atomic_write
 
 FIELDS = ["student_id", "course", "score", "graded_on"]
 type Row = tuple[int, dict[str, str]]
@@ -75,4 +76,31 @@ def import_journal(group: Group, path: Path) -> int:
                 raise JournalFormatError(f"рядок {entry.line}: {error}") from error
             student.add_grade(entry.grade)
             count += 1
+    return count
+
+
+def export_rows(group: Group) -> Iterator[dict[str, str]]:
+    """Генерує рядки CSV без накопичення всього журналу в пам’яті."""
+    for student, grade in group.iter_grades():
+        yield {
+            "student_id": str(student.id),
+            "course": grade.course,
+            "score": str(grade.score),
+            "graded_on": grade.graded_on.isoformat(),
+        }
+
+
+@timed
+def export_journal(group: Group, path: Path) -> int:
+    """Варіант 4: атомарно експортує журнал у кодуванні UTF-8 з BOM."""
+    count = 0
+    try:
+        with atomic_write(path, encoding="utf-8-sig") as file:
+            writer = csv.DictWriter(file, fieldnames=FIELDS, delimiter=";")
+            writer.writeheader()
+            for row in export_rows(group):
+                writer.writerow(row)
+                count += 1
+    except OSError as error:
+        raise StorageError(f"не вдалося записати журнал {path}: {error}") from error
     return count
