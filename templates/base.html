@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Система управління студентами{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'students/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{% url 'students:list' %}">student<span>portal</span></a>
+      <nav aria-label="Основна навігація">
+        <a href="{% url 'students:list' %}">Студенти</a>
+        <a href="{% url 'students:ranking' %}">Рейтинг</a>
+        <a href="{% url 'students:pages' %}">Сторінки</a>
+        <a href="{% url 'students:debtors' %}">Боржники</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container site-footer">КНІТ-63М · Лабораторна робота №7</footer>
+</body>
+</html>
