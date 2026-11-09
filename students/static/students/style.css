@@ -37,3 +37,14 @@ tbody tr:last-child td { border-bottom: 0; }
 .back { margin: 0 0 1.2rem; }
 .site-footer { padding-block: 1.5rem; color: var(--muted); border-top: 1px solid var(--line); font-size: .9rem; }
 @media (max-width: 620px) { .header-inner, .page-heading { align-items: start; flex-direction: column; } .header-inner { padding-block: 1rem; } nav { gap: .8rem; } .panel { padding: 1rem; } .search-controls { flex-direction: column; } }
+.nav-user { color: #d3e5ff; font-weight: 700; }
+.logout-form { display: inline; margin: 0; }
+.logout-form button { padding: .15rem .45rem; background: transparent; border: 1px solid #b9d5f9; }
+.message { padding: .85rem 1rem; background: #e6f7e9; color: #17632a; border: 1px solid #a9ddb2; border-radius: 8px; }
+.form-panel { max-width: 630px; }
+.form-panel h1 { margin-bottom: 1.2rem; }
+.form-panel label { display: block; font-weight: 700; margin-bottom: .3rem; }
+.form-panel input, .form-panel select { width: 100%; font: inherit; padding: .65rem .8rem; border: 1px solid #b8c6d6; border-radius: 8px; }
+.form-panel .errorlist, .form-error { color: #ae2435; }
+.action-links { display: flex; gap: 1rem; margin: 0 0 1.2rem; }
+.danger { background: #ae2435; }
