@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}ECTS {{ letter }} · {{ block.super }}{% endblock %}
+{% block content %}
+<p class="back"><a href="{% url 'students:list' %}">← Усі студенти</a></p>
+<div class="page-heading"><div><p class="eyebrow">ШКАЛА ECTS</p><h1>Середній бал за шкалою ECTS: {{ letter }}</h1></div></div>
+<section class="panel">
+  <ul>{% for student in students %}<li><a href="{% url 'students:detail' student.id %}">{{ student.full_name }}</a></li>{% empty %}<li>Таких студентів немає</li>{% endfor %}</ul>
+</section>
+{% endblock %}

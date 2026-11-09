@@ -1,9 +1,10 @@
-"""HTML and JSON views for students in the JSON-backed group."""
+"""HTML and JSON views for students in the database-backed group."""
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, TemplateView
 
+from student_portal.grades import ects_grade
 from student_portal.people import Student
 
 from .services import get_group, get_student_or_404
@@ -75,3 +76,22 @@ def debtors(request: HttpRequest) -> HttpResponse:
         if courses:
             rows.append({"student": student, "courses": courses})
     return render(request, "students/debtors.html", {"group": group, "debtors": rows})
+
+
+def by_ects(request: HttpRequest, letter: str) -> HttpResponse:
+    """List students whose average corresponds to an ECTS letter."""
+    group = get_group()
+    students = [
+        student
+        for student in group
+        if (average := student.average()) is not None
+        and ects_grade(int(average)) == letter
+    ]
+    return render(
+        request, "students/by_ects.html", {"letter": letter, "students": students}
+    )
+
+
+def legacy_student(request: HttpRequest, student_id: str) -> HttpResponse:
+    """Redirect four-digit old IDs to the canonical student detail URL."""
+    return redirect("students:detail", student_id=int(student_id), permanent=True)

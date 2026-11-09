@@ -1,6 +1,6 @@
 [project]
 name = "student-portal"
-version = "0.7.0"
+version = "0.8.0"
 description = "Система управління студентами"
 readme = "README.md"
 authors = [
@@ -30,6 +30,7 @@ dev = [
 
 [tool.ruff]
 line-length = 88
+extend-exclude = ["*/migrations/*"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "N", "UP", "B", "SIM"]
