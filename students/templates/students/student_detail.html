@@ -12,7 +12,8 @@
       <td>{{ grade.course }}</td><td>{{ grade.score }}</td><td>{{ grade.ects }}</td><td>{{ grade.graded_on|date:"d E Y" }}</td>
     </tr>{% empty %}<tr><td colspan="4">Оцінок ще немає</td></tr>{% endfor %}</tbody>
   </table></div>
-  {% with average=student.average %}<p class="summary">Середній бал: {{ average|floatformat:1|default:"-" }} {{ average|ects }}</p>{% endwith %}
+  {% with average=student.average %}<p class="summary">Середній бал: {{ average|floatformat:1|default:"-" }} {{ average|ects }}</p>
+  {% if average is not None %}<p><a href="{% url 'students:by-ects' average|ects %}">Інші студенти з оцінкою {{ average|ects }}</a></p>{% endif %}{% endwith %}
   <p><a href="{% url 'students:detail-json' student.id %}">Переглянути JSON ↗</a></p>
 </section>
 {% endblock %}
