@@ -49,7 +49,7 @@ class Group:
         return max(self.students, default=0) + 1
 
     def find(self, query: str) -> list[Student]:
-        return [s for s in self if query.casefold() in s.last_name.casefold()]
+        return [s for s in self if query.strip().casefold() in s.last_name.casefold()]
 
     def ranking(self) -> list[Student]:
         return sorted(
