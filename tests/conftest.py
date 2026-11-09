@@ -7,8 +7,18 @@ import pytest
 from student_portal.grades import Grade
 from student_portal.group import Group
 from student_portal.people import Student
+from student_portal.storage import save_group
 
 type StudentFactory = Callable[..., Student]
+
+
+@pytest.fixture
+def data_file(tmp_path, settings, group):
+    """Use a copy of the group instead of editing data/group.json."""
+    path = tmp_path / "group.json"
+    save_group(group, path)
+    settings.STUDENT_PORTAL_DATA = path
+    return path
 
 
 @pytest.fixture

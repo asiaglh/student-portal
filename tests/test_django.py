@@ -6,6 +6,7 @@ import pytest
 from django.conf import settings as django_settings
 from django.core.management import CommandError, call_command
 from django.urls import reverse
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from config import settings as project_settings
 from student_portal.grades import Grade
@@ -13,25 +14,14 @@ from student_portal.group import Group
 from student_portal.storage import save_group
 
 
-@pytest.fixture
-def data_file(tmp_path, settings, group):
-    """Ізольована копія групи замість data/group.json."""
-    path = tmp_path / "group.json"
-    save_group(group, path)
-    settings.STUDENT_PORTAL_DATA = path
-    return path
-
-
 def test_ranking_page_lists_best_student_first(client, data_file):
     response = client.get(reverse("students:ranking"))
 
     assert response.status_code == 200
-    assert [template.name for template in response.templates] == [
-        "students/ranking.html"
-    ]
+    assertTemplateUsed(response, "students/ranking.html")
     assert response.context["group"].name == "КН-11"
-    assert "<li>Коваль Олена: 91,5</li>" in response.text
-    assert "<li>Бойко Ірина: немає оцінок</li>" in response.text
+    assertContains(response, "<li>Коваль Олена: 91,5</li>", html=True)
+    assertContains(response, "<li>Бойко Ірина: немає оцінок</li>", html=True)
     assert response.text.index("Коваль Олена") < response.text.index("Бойко Ірина")
 
 
@@ -99,9 +89,7 @@ def test_debtors_page_lists_fx_courses(client, data_file, group):
     response = client.get(reverse("students:debtors"))
 
     assert response.status_code == 200
-    assert [template.name for template in response.templates] == [
-        "students/debtors.html"
-    ]
+    assertTemplateUsed(response, "students/debtors.html")
     assert response.context["group"].name == "КН-11"
     assert len(response.context["debtors"]) == 1
     assert response.context["debtors"][0]["courses"] == ["Python", "Алгебра"]
