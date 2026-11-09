@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Видалення студента · {{ block.super }}{% endblock %}
+{% block content %}
+<p class="back"><a href="{% url 'students:detail' object.pk %}">← Картка студента</a></p>
+<section class="panel form-panel">
+  <h1>Видалити студента?</h1>
+  <p>Підтвердьте видалення: <strong>{{ object }}</strong>. Оцінки студента також буде видалено.</p>
+  <form method="post">{% csrf_token %}<button type="submit" class="danger">Видалити</button></form>
+</section>
+{% endblock %}

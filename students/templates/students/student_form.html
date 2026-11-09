@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Зміна студента{% else %}Новий студент{% endif %} · {{ block.super }}{% endblock %}
+{% block content %}
+<p class="back"><a href="{% url 'students:list' %}">← Усі студенти</a></p>
+<section class="panel form-panel">
+  <h1>{% if object %}Зміна: {{ object }}{% else %}Новий студент{% endif %}</h1>
+  <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зберегти</button>
+  </form>
+</section>
+{% endblock %}
