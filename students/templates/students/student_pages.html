@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Студенти по сторінках · {{ block.super }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Пагінація · по 2 студенти</p><h1>Студенти по сторінках</h1></div><span class="badge">Сторінка {{ page_obj.number }} з {{ paginator.num_pages }}</span></div>
+<section class="panel">
+  <ol class="rank-list" start="{{ page_obj.start_index }}">
+    {% for student in students %}<li><a href="{% url 'students:detail' student.id %}">{{ student.full_name }}</a></li>{% endfor %}
+  </ol>
+  <div class="pagination">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← назад</a>{% endif %}
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">далі →</a>{% endif %}
+  </div>
+</section>
+{% endblock %}

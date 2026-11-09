@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% partialdef student-row %}
+<tr>
+  <td><a href="{% url 'students:detail' student.id %}">{{ student.full_name }}</a></td>
+  <td>{{ student.grades|length }}</td>
+  <td>{{ student.average|floatformat:1|default:"-" }}</td>
+</tr>
+{% endpartialdef %}
+{% block title %}Студенти · {{ block.super }}{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">Група {{ group.name }}</p><h1>Студенти</h1></div>
+  <span class="badge">Усього: {{ students|length }}</span>
+</div>
+<section class="panel">
+  <form method="get" class="search-form">
+    <label for="query">Пошук за прізвищем</label>
+    <div class="search-controls">
+      <input id="query" type="search" name="q" value="{{ query }}" placeholder="Наприклад, Коваль">
+      <button type="submit">Знайти</button>
+    </div>
+  </form>
+  {% if students %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Студент</th><th>Оцінок</th><th>Середній бал</th></tr></thead>
+    <tbody>{% for student in students %}{% partial student-row %}{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="empty">Нікого не знайдено за запитом «{{ query }}»</p>{% endif %}
+</section>
+{% endblock %}

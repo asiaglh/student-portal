@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load grades %}
+{% block title %}{{ student.full_name }} · {{ block.super }}{% endblock %}
+{% block content %}
+<p class="back"><a href="{% url 'students:list' %}">← Усі студенти</a></p>
+<div class="page-heading"><div><p class="eyebrow">Картка студента · ID {{ student.id }}</p><h1>{{ student.full_name }}</h1></div></div>
+<section class="panel">
+  <h2>Оцінки</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Дисципліна</th><th>Бали</th><th>ECTS</th><th>Дата</th></tr></thead>
+    <tbody>{% for grade in student.grades %}<tr>
+      <td>{{ grade.course }}</td><td>{{ grade.score }}</td><td>{{ grade.ects }}</td><td>{{ grade.graded_on|date:"d E Y" }}</td>
+    </tr>{% empty %}<tr><td colspan="4">Оцінок ще немає</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% with average=student.average %}<p class="summary">Середній бал: {{ average|floatformat:1|default:"-" }} {{ average|ects }}</p>{% endwith %}
+  <p><a href="{% url 'students:detail-json' student.id %}">Переглянути JSON ↗</a></p>
+</section>
+{% endblock %}
