@@ -10,10 +10,14 @@ app_name = "students"
 
 urlpatterns = [
     path("", views.student_list, name="list"),
+    path("new/", views.StudentCreateView.as_view(), name="create"),
     path("ranking/", views.RankingView.as_view(), name="ranking"),
     path("pages/", views.StudentListView.as_view(), name="pages"),
     path("debtors/", views.debtors, name="debtors"),
     path("ects/<ects:letter>/", views.by_ects, name="by-ects"),
+    path("<int:student_id>/grades/new/", views.add_grade, name="add-grade"),
+    path("<int:student_id>/edit/", views.StudentUpdateView.as_view(), name="edit"),
+    path("<int:student_id>/delete/", views.StudentDeleteView.as_view(), name="delete"),
     path("<int:student_id>/", views.student_detail, name="detail"),
     path("<int:student_id>.json", views.student_json, name="detail-json"),
     re_path(r"^st/(?P<student_id>[0-9]{4})/$", views.legacy_student),

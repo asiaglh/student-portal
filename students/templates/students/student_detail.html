@@ -4,6 +4,11 @@
 {% block content %}
 <p class="back"><a href="{% url 'students:list' %}">← Усі студенти</a></p>
 <div class="page-heading"><div><p class="eyebrow">Картка студента · ID {{ student.id }}</p><h1>{{ student.full_name }}</h1></div></div>
+<div class="action-links">
+  {% if perms.students.add_grade %}<a href="{% url 'students:add-grade' student.id %}">Нова оцінка</a>{% endif %}
+  {% if perms.students.change_student %}<a href="{% url 'students:edit' student.id %}">Змінити</a>{% endif %}
+  {% if perms.students.delete_student %}<a href="{% url 'students:delete' student.id %}">Видалити</a>{% endif %}
+</div>
 <section class="panel">
   <h2>Оцінки</h2>
   <div class="table-wrap"><table>

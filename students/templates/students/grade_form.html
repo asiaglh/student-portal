@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Нова оцінка · {{ block.super }}{% endblock %}
+{% block content %}
+<p class="back"><a href="{% url 'students:detail' student.pk %}">← Картка студента</a></p>
+<section class="panel form-panel">
+  <h1>Нова оцінка</h1>
+  <p class="lead">{{ student }}</p>
+  <form method="post" novalidate>{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зберегти</button>
+  </form>
+</section>
+{% endblock %}

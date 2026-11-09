@@ -12,6 +12,7 @@
   <div><p class="eyebrow">Група {{ group.name }}</p><h1>Студенти</h1></div>
   <span class="badge">Усього: {{ students|length }}</span>
 </div>
+{% if perms.students.add_student %}<p class="action-links"><a href="{% url 'students:create' %}">Новий студент</a></p>{% endif %}
 <section class="panel">
   <form method="get" class="search-form">
     <label for="query">Пошук за прізвищем</label>

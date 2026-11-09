@@ -1,8 +1,12 @@
 """Спільні фікстури з незалежними даними для кожного тесту."""
 
 from collections.abc import Callable
+from io import StringIO
 
 import pytest
+from django.contrib.auth.models import Group as AuthGroup
+from django.core.management import call_command
+from django.test import Client
 
 from student_portal.grades import Grade
 from student_portal.group import Group
@@ -11,6 +15,33 @@ from student_portal.storage import save_group
 from students.services import store_group
 
 type StudentFactory = Callable[..., Student]
+
+
+@pytest.fixture
+def client(client, django_user_model):
+    """Client signed in as a viewer without editing permissions."""
+    user = django_user_model.objects.create_user("viewer", password="pass-12345")
+    client.force_login(user)
+    return client
+
+
+@pytest.fixture
+def anonymous():
+    """Client without a session for login middleware checks."""
+    return Client()
+
+
+@pytest.fixture
+def role_user(django_user_model):
+    """Create a user assigned to one of the idempotently configured roles."""
+    call_command("setup_roles", stdout=StringIO())
+
+    def create(username: str, role: str):
+        user = django_user_model.objects.create_user(username, password="pass-12345")
+        user.groups.add(AuthGroup.objects.get(name=role))
+        return user
+
+    return create
 
 
 @pytest.fixture
