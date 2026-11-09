@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рейтинг групи {{ group.name }}</title>
+  <style>
+    body { margin: 0; color: #15233a; background: #eef3f8; font: 18px/1.5 system-ui, sans-serif; }
+    main { max-width: 780px; margin: 56px auto; padding: 36px 44px; background: white; border-radius: 18px; box-shadow: 0 12px 32px #17345216; }
+    h1 { margin: 0 0 12px; font-size: 34px; }
+    p { color: #50637b; }
+    li { padding: 11px 14px; border-bottom: 1px solid #dce5ee; }
+    a { color: #124c84; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Рейтинг групи {{ group.name }}</h1>
+    <p>Середній бал за всіма дисциплінами; студенти без оцінок — наприкінці.</p>
+    <ol>
+      {% for student in group.ranking %}
+      <li>{{ student.full_name }}: {% if student.grades %}{{ student.average|floatformat:1 }}{% else %}немає оцінок{% endif %}</li>
+      {% empty %}
+      <li>У групі немає студентів</li>
+      {% endfor %}
+    </ol>
+    <p><a href="{% url 'students:debtors' %}">Переглянути боржників</a></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Боржники групи {{ group.name }}</title>
+  <style>
+    body { margin: 0; color: #15233a; background: #eef3f8; font: 18px/1.5 system-ui, sans-serif; }
+    main { max-width: 780px; margin: 56px auto; padding: 36px 44px; background: white; border-radius: 18px; box-shadow: 0 12px 32px #17345216; }
+    h1 { margin: 0 0 12px; font-size: 34px; }
+    li { padding: 11px 14px; border-bottom: 1px solid #dce5ee; }
+    a { color: #124c84; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Боржники групи {{ group.name }}</h1>
+    {% if debtors %}
+    <ul>
+      {% for row in debtors %}
+      <li>{{ row.student.full_name }}: {{ row.courses|join:", " }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Боржників немає</p>
+    {% endif %}
+    <p><a href="{% url 'students:ranking' %}">Повернутися до рейтингу</a></p>
+  </main>
+</body>
+</html>
