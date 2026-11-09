@@ -171,8 +171,27 @@ uv run --env-file .env python manage.py runserver
 uv run --env-file .env python manage.py group_stats data/group.json
 ```
 
-Сторінка рейтингу: <http://127.0.0.1:8000/students/>. Варіант 4 — сторінка
-боржників із дисциплінами Fx: <http://127.0.0.1:8000/students/debtors/>.
+### Сторінки
+
+| Адреса | Що показує | Представлення |
+| --- | --- | --- |
+| `/students/` | Список і пошук за прізвищем `?q=` | `student_list` (FBV) |
+| `/students/<id>/` | Картка студента й оцінки ECTS | `student_detail` (FBV) |
+| `/students/<id>.json` | Ім’я та середній бал у JSON | `student_json` (FBV) |
+| `/students/ranking/` | Рейтинг групи | `RankingView` (CBV) |
+| `/students/pages/` | Список по два студенти, `?page=` | `StudentListView` (CBV) |
+| `/students/debtors/` | Боржники з дисциплінами Fx (ЛР6) | `debtors` (FBV) |
+
+Спільний `base.html` підключає `students/style.css`; рейтинг використовує
+тег включення `student_card` (варіант 4), а список — фрагмент `student-row`.
+Для збирання статичних файлів перед розгортанням:
+
+```bash
+uv run --env-file .env python manage.py collectstatic --noinput
+```
+
+Зібрані файли у `staticfiles/` локальні й не додаються до Git.
+Приклад: <http://127.0.0.1:8000/students/>.
 Команда `group_stats` завершується з кодом 1 для відсутнього або пошкодженого
 файлу. CI використовує окремий відкритий ключ лише для тестів і запускає
 `manage.py check` та `makemigrations --check --dry-run`.

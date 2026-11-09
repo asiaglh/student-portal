@@ -1,6 +1,6 @@
 [project]
 name = "student-portal"
-version = "0.6.0"
+version = "0.7.0"
 description = "Система управління студентами"
 readme = "README.md"
 authors = [
