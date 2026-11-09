@@ -87,3 +87,22 @@ uv run ruff format --check .
 
 ## Процес розробки
 Issue → гілка → коміти → pull request → самоперевірка або рецензія → Squash and merge.
+
+## Тести
+ЛР4: 94 модульні тести для grades, people, group, storage, journal, cli
+та індивідуальних розширень варіанта 4 з ЛР2 і ЛР3.
+
+```bash
+uv run pytest
+uv run pytest -v
+uv run pytest -k ranking
+uv run pytest -v tests/test_variant4.py
+```
+
+Тести використовують незалежні фікстури, tmp_path, monkeypatch, capsys
+і caplog; не змінюють файли в data/. Повторний запуск, окремі модулі
+та зворотний порядок дають той самий результат. Реальні затримки,
+мережа та виклик main() у тестах не використовуються.
+
+Знайдений тестами дефект: Group.find не враховував пробіли навколо
+запиту. Виправлено окремим комітом: запит очищається через strip().
