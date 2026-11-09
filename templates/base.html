@@ -16,12 +16,17 @@
         <a href="{% url 'students:ranking' %}">Рейтинг</a>
         <a href="{% url 'students:pages' %}">Сторінки</a>
         <a href="{% url 'students:debtors' %}">Боржники</a>
+        {% if user.is_authenticated %}
+        <span class="nav-user">{{ user.get_username }}</span>
+        <form method="post" action="{% url 'logout' %}" class="logout-form">{% csrf_token %}<button type="submit">Вийти</button></form>
+        {% endif %}
       </nav>
     </div>
   </header>
   <main class="container">
+    {% for message in messages %}<p class="message">{{ message }}</p>{% endfor %}
     {% block content %}{% endblock %}
   </main>
-  <footer class="container site-footer">КНІТ-63М · Лабораторна робота №8</footer>
+  <footer class="container site-footer">КНІТ-63М · Лабораторна робота №9</footer>
 </body>
 </html>
