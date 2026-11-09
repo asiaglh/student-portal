@@ -11,10 +11,10 @@ from pytest_django.asserts import assertContains, assertTemplateUsed
 from config import settings as project_settings
 from student_portal.grades import Grade
 from student_portal.group import Group
-from student_portal.storage import save_group
+from students.services import store_group
 
 
-def test_ranking_page_lists_best_student_first(client, data_file):
+def test_ranking_page_lists_best_student_first(client, db_group):
     response = client.get(reverse("students:ranking"))
 
     assert response.status_code == 200
@@ -25,8 +25,8 @@ def test_ranking_page_lists_best_student_first(client, data_file):
     assert response.text.index("Коваль Олена") < response.text.index("Бойко Ірина")
 
 
-def test_ranking_page_for_empty_group(client, data_file):
-    save_group(Group("Порожня"), data_file)
+def test_ranking_page_for_empty_group(client, db):
+    store_group(Group("Порожня"))
 
     response = client.get(reverse("students:ranking"))
 
@@ -79,12 +79,12 @@ def test_settings_are_configured(settings):
     assert django_settings.ROOT_URLCONF == "config.urls"
 
 
-def test_debtors_page_lists_fx_courses(client, data_file, group):
-    student = group.get(2)
+def test_debtors_page_lists_fx_courses(client, db_group):
+    student = db_group.get(2)
     student.add_grade(Grade("Python", 45))
     student.add_grade(Grade("Python", 50))
     student.add_grade(Grade("Алгебра", 58))
-    save_group(group, data_file)
+    store_group(db_group)
 
     response = client.get(reverse("students:debtors"))
 
@@ -96,7 +96,7 @@ def test_debtors_page_lists_fx_courses(client, data_file, group):
     assert "<li>Мельник Андрій: Python, Алгебра</li>" in response.text
 
 
-def test_debtors_page_without_fx(client, data_file):
+def test_debtors_page_without_fx(client, db_group):
     response = client.get(reverse("students:debtors"))
 
     assert response.status_code == 200
