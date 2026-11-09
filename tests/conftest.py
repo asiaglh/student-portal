@@ -33,3 +33,12 @@ def make_student() -> StudentFactory:
         return Student(next_id, "Студент", last_name, grades)
 
     return make
+
+
+@pytest.fixture
+def answers(monkeypatch):
+    def set_answers(*values: str) -> None:
+        replies = iter(values)
+        monkeypatch.setattr("builtins.input", lambda prompt="": next(replies))
+
+    return set_answers

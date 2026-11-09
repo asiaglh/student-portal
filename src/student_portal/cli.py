@@ -13,9 +13,11 @@ from student_portal.group import Group
 from student_portal.journal import export_journal, import_journal
 from student_portal.notify import notify_all
 from student_portal.people import Student
+from student_portal.remote import fetch_group
 from student_portal.storage import load_group, save_group
 
 DATA_FILE = Path("data/group.json")
+DEFAULT_DEKANAT_URL = "https://dekanat.example.edu/api/groups/kn-11"
 type Handler = Callable[[Group], None]
 COMMANDS: dict[str, tuple[str, Handler]] = {}
 
@@ -131,7 +133,17 @@ def notify_students(group: Group) -> None:
         print(f"Надіслано: {message}")
 
 
-@command("11", "експортувати журнал CSV (варіант 4 ЛР3)")
+@command("11", "завантажити групу з сервера деканату")
+def download_group(group: Group) -> None:
+    url = os.environ.get("DEKANAT_URL", DEFAULT_DEKANAT_URL)
+    remote = fetch_group(url)
+    print(f"На сервері: група {remote.name}, студентів - {len(remote)}")
+    if input("Замінити поточну групу? (т/н) ").strip().lower() == "т":
+        group.name, group.students = remote.name, remote.students
+        print("Групу замінено")
+
+
+@command("12", "експортувати журнал CSV (варіант 4 ЛР3)")
 def export_grades(group: Group) -> None:
     path = Path(input("Шлях для експорту CSV: ").strip())
     count = export_journal(group, path)

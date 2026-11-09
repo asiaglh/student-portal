@@ -9,15 +9,6 @@ from student_portal.cli import run
 from student_portal.decorators import timed
 
 
-@pytest.fixture
-def answers(monkeypatch):
-    def set_answers(*values: str) -> None:
-        replies = iter(values)
-        monkeypatch.setattr("builtins.input", lambda prompt="": next(replies))
-
-    return set_answers
-
-
 def test_menu_adds_student(group, answers, capsys):
     answers("4", "Марія", "Шевчук", "0")
 
