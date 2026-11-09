@@ -92,9 +92,9 @@ def test_export_rows_is_generator(group):
     rows.close()
 
 
-def test_menu_eleven_exports_to_requested_path(group, tmp_path, monkeypatch, capsys):
+def test_menu_twelve_exports_to_requested_path(group, tmp_path, monkeypatch, capsys):
     path = tmp_path / "menu-export.csv"
-    replies = iter(["11", str(path), "0"])
+    replies = iter(["12", str(path), "0"])
     monkeypatch.setattr("builtins.input", lambda prompt="": next(replies))
 
     cli.run(group)
