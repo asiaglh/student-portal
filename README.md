@@ -150,8 +150,10 @@ GitHub Actions має незалежні завдання `checks` (Ruff, фор
 ## Вебзастосунок Django
 
 Проєкт `config` містить загальні налаштування й кореневі маршрути.
-Застосунок `students` використовує ядро `student_portal` для читання JSON,
-рейтингу та оцінок ECTS. Ядро не залежить від Django.
+Застосунок `students` читає дані вебсторінок із SQLite через моделі та
+`students/services.py`. Рейтинг і оцінки ECTS обчислює ядро `student_portal`,
+яке не залежить від Django. Консольний застосунок і `group_stats` далі
+працюють із JSON.
 
 Створіть `.env` на основі `.env.example` і вставте власний випадковий ключ у
 `DJANGO_SECRET_KEY`. Значення можна отримати командою
@@ -167,6 +169,7 @@ GitHub Actions має незалежні завдання `checks` (Ruff, фор
 ```bash
 uv sync --locked
 uv run --env-file .env python manage.py migrate
+uv run --env-file .env python manage.py load_group data/group.json
 uv run --env-file .env python manage.py runserver
 uv run --env-file .env python manage.py group_stats data/group.json
 ```
@@ -175,12 +178,36 @@ uv run --env-file .env python manage.py group_stats data/group.json
 
 | Адреса | Що показує | Представлення |
 | --- | --- | --- |
+| `/` | Перенаправлення 302 до списку | `RedirectView` |
 | `/students/` | Список і пошук за прізвищем `?q=` | `student_list` (FBV) |
 | `/students/<id>/` | Картка студента й оцінки ECTS | `student_detail` (FBV) |
 | `/students/<id>.json` | Ім’я та середній бал у JSON | `student_json` (FBV) |
 | `/students/ranking/` | Рейтинг групи | `RankingView` (CBV) |
 | `/students/pages/` | Список по два студенти, `?page=` | `StudentListView` (CBV) |
 | `/students/debtors/` | Боржники з дисциплінами Fx (ЛР6) | `debtors` (FBV) |
+| `/students/ects/<ects:letter>/` | Студенти за літерою середнього бала ECTS | `by_ects` (FBV) |
+| `/students/st/<4 цифри>/` | Перенаправлення 301 на картку студента | `legacy_student` (FBV) |
+| `/admin/` | Редагування груп, студентів та оцінок | Django Admin |
+
+### База даних і адмінпанель
+
+Після `migrate` завантажте початкові дані командою
+`uv run --env-file .env python manage.py load_group data/group.json`.
+Повторний запуск оновлює студентів та їхні оцінки без копій. Порожня база
+показує сторінку 503. Для входу в `/admin/` створіть локального адміністратора:
+
+```bash
+uv run --env-file .env python manage.py createsuperuser
+```
+
+Список студентів має пошук за ім’ям і фільтр групи; на картці студента
+оцінки редагуються у вкладеній таблиці. Список оцінок має пошук за прізвищем
+і фільтр ECTS (варіант 4). Після зміни моделей створіть міграцію командою
+`uv run --env-file .env python manage.py makemigrations students`, перевірте її
+SQL через `sqlmigrate students <номер>` і застосуйте через `migrate`.
+
+Перший middleware додає `Server-Timing`, а CSP обмежує ресурси власним
+доменом; помилка сховища дає зрозумілу сторінку 503.
 
 Спільний `base.html` підключає `students/style.css`; рейтинг використовує
 тег включення `student_card` (варіант 4), а список — фрагмент `student-row`.
