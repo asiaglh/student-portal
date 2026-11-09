@@ -89,14 +89,14 @@ uv run ruff format --check .
 Issue → гілка → коміти → pull request → самоперевірка або рецензія → Squash and merge.
 
 ## Тести
-ЛР4: 94 модульні тести для grades, people, group, storage, journal, cli
-та індивідуальних розширень варіанта 4 з ЛР2 і ЛР3.
+ЛР4–6: модульні тести ядра та інтеграційні тести Django з pytest-django.
+Для тестів потрібен локальний `.env` із ключем Django.
 
 ```bash
-uv run pytest
-uv run pytest -v
-uv run pytest -k ranking
-uv run pytest -v tests/test_variant4.py
+uv run --env-file .env pytest
+uv run --env-file .env pytest --cov
+uv run --env-file .env pytest -k ranking
+uv run --env-file .env pytest -v tests/test_django.py
 ```
 
 Тести використовують незалежні фікстури, tmp_path, monkeypatch, capsys
@@ -131,8 +131,8 @@ DEKANAT_URL=http://127.0.0.1:8001/group.json uv run student-portal
 ліміт активних завдань. Тести не потребують мережі та не змінюють `data/`.
 
 ```bash
-uv run pytest --cov
-uv run pytest --cov --cov-report=html
+uv run --env-file .env pytest --cov
+uv run --env-file .env pytest --cov --cov-report=html
 uv run ruff check .
 uv run ruff format --check .
 uv run mypy src
@@ -146,3 +146,33 @@ GitHub Actions має незалежні завдання `checks` (Ruff, фор
 та `tests` (pytest з branch coverage). `uv sync --locked` перевіряє lock-файл;
 артефакт `coverage-html` зберігається навіть після невдалих тестів.
 Правило `main` вимагає успіху обох перевірок перед злиттям PR.
+
+## Вебзастосунок Django
+
+Проєкт `config` містить загальні налаштування й кореневі маршрути.
+Застосунок `students` використовує ядро `student_portal` для читання JSON,
+рейтингу та оцінок ECTS. Ядро не залежить від Django.
+
+Створіть `.env` на основі `.env.example` і вставте власний випадковий ключ у
+`DJANGO_SECRET_KEY`. Значення можна отримати командою
+`uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`.
+Файл `.env` та локальна база `db.sqlite3` ігноруються Git.
+
+| Змінна | Приклад | За замовчуванням |
+| --- | --- | --- |
+| `DJANGO_SECRET_KEY` | випадковий ключ | немає; без нього Django не запускається |
+| `DJANGO_DEBUG` | `1` для локальної роботи | `0` |
+| `DJANGO_ALLOWED_HOSTS` | `"127.0.0.1 localhost"` | порожній список |
+
+```bash
+uv sync --locked
+uv run --env-file .env python manage.py migrate
+uv run --env-file .env python manage.py runserver
+uv run --env-file .env python manage.py group_stats data/group.json
+```
+
+Сторінка рейтингу: <http://127.0.0.1:8000/students/>. Варіант 4 — сторінка
+боржників із дисциплінами Fx: <http://127.0.0.1:8000/students/debtors/>.
+Команда `group_stats` завершується з кодом 1 для відсутнього або пошкодженого
+файлу. CI використовує окремий відкритий ключ лише для тестів і запускає
+`manage.py check` та `makemigrations --check --dry-run`.
